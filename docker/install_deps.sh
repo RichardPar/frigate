@@ -30,13 +30,16 @@ apt-get -qq install --no-install-recommends --no-install-suggests -y \
     libedgetpu1-max python3-tflite-runtime python3-pycoral
 
 # armNN_GPU -> arm64
-# Khadas VIM4 specific at this point!
+# ROCK 4 specific at this point!
 if [[ "${TARGETARCH}" == "arm64" ]]; then
    wget -c "https://github.com/ARM-software/armnn/releases/download/v23.02/ArmNN-linux-aarch64.tar.gz"
    mkdir /lib/armnn
    tar -xf ArmNN*.tar.gz -C /lib/armnn
-   wget "https://dl.khadas.com/repos/vim4/pool/main/l/linux-gpu-mali-wayland/linux-gpu-mali-wayland_1.1-r37p0-202208_arm64.deb"
-   dpkg -i linux-gpu-mali-wayland_1.1-r37p0-202208_arm64.deb
+   
+   export DISTRO=buster-stable
+   echo "deb http://apt.radxa.com/$DISTRO/ ${DISTRO%-*} main" | sudo tee -a /etc/apt/sources.list.d/apt-radxa-com.list
+   apt-get -qq update
+   apt-get -qq -y install rockchip-mali-midgard14
 fi
 
 
