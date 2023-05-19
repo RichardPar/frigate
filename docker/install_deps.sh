@@ -37,7 +37,7 @@ if [[ "${TARGETARCH}" == "arm64" ]]; then
    tar -xf ArmNN*.tar.gz -C /lib/armnn
    
    export DISTRO=buster-stable
-   echo "deb http://apt.radxa.com/$DISTRO/ ${DISTRO%-*} main" | sudo tee -a /etc/apt/sources.list.d/apt-radxa-com.list
+   echo "deb http://apt.radxa.com/$DISTRO/ ${DISTRO%-*} main" | tee -a /etc/apt/sources.list.d/apt-radxa-com.list
    apt-get -qq update
    apt-get -qq -y install rockchip-mali-midgard14
 fi
