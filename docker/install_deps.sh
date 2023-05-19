@@ -38,6 +38,7 @@ if [[ "${TARGETARCH}" == "arm64" ]]; then
    
    export DISTRO=buster-stable
    echo "deb http://apt.radxa.com/$DISTRO/ ${DISTRO%-*} main" | tee -a /etc/apt/sources.list.d/apt-radxa-com.list
+   wget -O - apt.radxa.com/$DISTRO/public.key | apt-key add -
    apt-get -qq update
    apt-get -qq -y install rockchip-mali-midgard14
 fi

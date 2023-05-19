@@ -39,22 +39,22 @@ RUN wget -qO go2rtc "https://github.com/AlexxIT/go2rtc/releases/download/v1.2.0/
 # 2. Build libUSB without udev to handle NCS2 enumeration
 #
 ####
-# Download and Convert OpenVino model
-FROM base_amd64 AS ov-converter
-ARG DEBIAN_FRONTEND
+## Download and Convert OpenVino model
+#FROM base_amd64 AS ov-converter
+#ARG DEBIAN_FRONTEND
 
-# Install OpenVino Runtime and Dev library
-COPY requirements-ov.txt /requirements-ov.txt
-RUN apt-get -qq update \
-    && apt-get -qq install -y wget python3 python3-distutils \
-    && wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py \
-    && python3 get-pip.py "pip" \
-    && pip install -r /requirements-ov.txt
-
-# Get OpenVino Model
-RUN mkdir /models \
-    && cd /models && omz_downloader --name ssdlite_mobilenet_v2 \
-    && cd /models && omz_converter --name ssdlite_mobilenet_v2 --precision FP16
+## Install OpenVino Runtime and Dev library
+#COPY requirements-ov.txt /requirements-ov.txt
+#RUN apt-get -qq update \
+#    && apt-get -qq install -y wget python3 python3-distutils \
+#    && wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py \
+#    && python3 get-pip.py "pip" \
+#    && pip install -r /requirements-ov.txt
+#
+## Get OpenVino Model
+#RUN mkdir /models \
+#    && cd /models && omz_downloader --name ssdlite_mobilenet_v2 \
+#    && cd /models && omz_converter --name ssdlite_mobilenet_v2 --precision FP16
 
 
 # libUSB - No Udev
@@ -89,10 +89,10 @@ FROM wget AS models
 RUN wget -qO edgetpu_model.tflite https://github.com/google-coral/test_data/raw/release-frogfish/ssdlite_mobiledet_coco_qat_postprocess_edgetpu.tflite
 RUN wget -qO cpu_model.tflite https://github.com/google-coral/test_data/raw/release-frogfish/ssdlite_mobiledet_coco_qat_postprocess.tflite
 COPY labelmap.txt .
-# Copy OpenVino model
-COPY --from=ov-converter /models/public/ssdlite_mobilenet_v2/FP16 openvino-model
-RUN wget -q https://github.com/openvinotoolkit/open_model_zoo/raw/master/data/dataset_classes/coco_91cl_bkgr.txt -O openvino-model/coco_91cl_bkgr.txt && \
-    sed -i 's/truck/car/g' openvino-model/coco_91cl_bkgr.txt
+## Copy OpenVino model
+#COPY --from=ov-converter /models/public/ssdlite_mobilenet_v2/FP16 openvino-model
+#RUN wget -q https://github.com/openvinotoolkit/open_model_zoo/raw/master/data/dataset_classes/coco_91cl_bkgr.txt -O openvino-model/coco_91cl_bkgr.txt && \
+#    sed -i 's/truck/car/g' openvino-model/coco_91cl_bkgr.txt
 
 
 
@@ -228,7 +228,7 @@ CMD ["sleep", "infinity"]
 
 # Frigate web build
 # force this to run on amd64 because QEMU is painfully slow
-FROM --platform=linux/amd64 node:16 AS web-build
+FROM --platform=linux node:16 AS web-build
 
 WORKDIR /work
 COPY web/package.json web/package-lock.json ./
@@ -252,6 +252,11 @@ FROM deps AS frigate
 
 WORKDIR /opt/frigate/
 COPY --from=rootfs / /
+RUN ln -s /usr/lib/aarch64-linux-gnu/libOpenCL.so.1 /usr/lib/aarch64-linux-gnu/libOpenCL.so | true
+RUN rm /etc/ld.so.cache
+RUN ldconfig
+
+
 
 # Frigate w/ TensorRT Support as separate image
 FROM frigate AS frigate-tensorrt
@@ -265,3 +270,4 @@ FROM devcontainer AS devcontainer-trt
 
 RUN --mount=type=bind,from=trt-wheels,source=/trt-wheels,target=/deps/trt-wheels \
     pip3 install -U /deps/trt-wheels/*.whl
+
