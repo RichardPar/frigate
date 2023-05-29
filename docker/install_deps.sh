@@ -31,14 +31,18 @@ apt-get -qq update
 apt-get -qq install --no-install-recommends --no-install-suggests -y \
     libedgetpu1-max python3-tflite-runtime python3-pycoral
 
-# armNN_GPU -> arm64
-# Khadas VIM4 specific at this point!
+# RockChip RK3588 -> arm64
+
 if [[ "${TARGETARCH}" == "arm64" ]]; then
-   wget -c "https://github.com/ARM-software/armnn/releases/download/v23.02/ArmNN-linux-aarch64.tar.gz"
-   mkdir /lib/armnn
-   tar -xf ArmNN*.tar.gz -C /lib/armnn
-   wget "https://dl.khadas.com/repos/vim4/pool/main/l/linux-gpu-mali-wayland/linux-gpu-mali-wayland_1.1-r37p0-202208_arm64.deb"
-   dpkg -i linux-gpu-mali-wayland_1.1-r37p0-202208_arm64.deb
+    apt-get -y update
+    apt-get -y install gcc git python3-dev python3-pip python3-numpy python3-opencv
+    git clone https://github.com/rockchip-linux/rknn-toolkit2.git
+    git clone https://github.com/rockchip-linux/rknpu2.git
+
+    cp rknpu2/runtime/RK3588/Linux/librknn_api/aarch64/* /usr/lib
+    cp rknpu2/runtime/RK3588/Linux/rknn_server/aarch64/usr/bin/* /usr/bin
+
+    pip3 install rknn-toolkit2/rknn_toolkit_lite2/packages/rknn_toolkit_lite2-1.4.0-cp39-cp39-linux_aarch64.whl -i https://pypi.tuna.tsinghua.edu.cn/simple/
 fi
 
 

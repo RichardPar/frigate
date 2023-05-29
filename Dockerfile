@@ -90,9 +90,9 @@ RUN wget -qO edgetpu_model.tflite https://github.com/google-coral/test_data/raw/
 RUN wget -qO cpu_model.tflite https://github.com/google-coral/test_data/raw/release-frogfish/ssdlite_mobiledet_coco_qat_postprocess.tflite
 COPY labelmap.txt .
 # Copy OpenVino model
-COPY --from=ov-converter /models/public/ssdlite_mobilenet_v2/FP16 openvino-model
-RUN wget -q https://github.com/openvinotoolkit/open_model_zoo/raw/master/data/dataset_classes/coco_91cl_bkgr.txt -O openvino-model/coco_91cl_bkgr.txt && \
-    sed -i 's/truck/car/g' openvino-model/coco_91cl_bkgr.txt
+#COPY --from=ov-converter /models/public/ssdlite_mobilenet_v2/FP16 openvino-model
+#RUN wget -q https://github.com/openvinotoolkit/open_model_zoo/raw/master/data/dataset_classes/coco_91cl_bkgr.txt -O openvino-model/coco_91cl_bkgr.txt && \
+#    sed -i 's/truck/car/g' openvino-model/coco_91cl_bkgr.txt
 
 
 
@@ -228,7 +228,7 @@ CMD ["sleep", "infinity"]
 
 # Frigate web build
 # force this to run on amd64 because QEMU is painfully slow
-FROM --platform=linux/amd64 node:16 AS web-build
+FROM --platform=linux node:16 AS web-build
 
 WORKDIR /work
 COPY web/package.json web/package-lock.json ./
