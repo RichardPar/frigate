@@ -42,7 +42,7 @@ if [[ "${TARGETARCH}" == "arm64" ]]; then
     cp rknpu2/runtime/RK3588/Linux/librknn_api/aarch64/* /usr/lib
     cp rknpu2/runtime/RK3588/Linux/rknn_server/aarch64/usr/bin/* /usr/bin
 
-    pip3 install rknn-toolkit2/rknn_toolkit_lite2/packages/rknn_toolkit_lite2-1.4.0-cp39-cp39-linux_aarch64.whl -i https://pypi.tuna.tsinghua.edu.cn/simple/
+    pip3 install rknn-toolkit2/rknn_toolkit_lite2/packages/rknn_toolkit_lite2-1.5.0-cp39-cp39-linux_aarch64.whl -i https://pypi.tuna.tsinghua.edu.cn/simple/
 fi
 
 
