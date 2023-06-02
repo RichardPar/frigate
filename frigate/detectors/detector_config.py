@@ -1,6 +1,6 @@
 import hashlib
 import json
-import logging
+from loguru import logger
 from enum import Enum
 import os
 from typing import Dict, List, Optional, Tuple, Union, Literal
@@ -15,7 +15,7 @@ from frigate.plus import PlusApi
 from frigate.util import load_labels
 
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 class PixelFormatEnum(str, Enum):

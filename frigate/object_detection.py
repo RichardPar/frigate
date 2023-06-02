@@ -1,5 +1,5 @@
 import datetime
-import logging
+from loguru import logger
 import multiprocessing as mp
 import os
 import queue
@@ -15,7 +15,7 @@ from frigate.detectors import create_detector
 
 from frigate.util import EventsPerSecond, SharedMemoryFrameManager, listen, load_labels
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 class ObjectDetector(ABC):
@@ -80,7 +80,7 @@ def run_detector(
     detector_config,
 ):
     threading.current_thread().name = f"detector:{name}"
-    logger = logging.getLogger(f"detector.{name}")
+    #logger = logging.getLogger(f"detector.{name}")
     logger.info(f"Starting detection process: {os.getpid()}")
     setproctitle(f"frigate.detector.{name}")
     listen()

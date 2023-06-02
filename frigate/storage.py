@@ -1,6 +1,6 @@
 """Handle storage retention and usage."""
 
-import logging
+from loguru import logger
 from pathlib import Path
 import shutil
 import threading
@@ -11,7 +11,7 @@ from frigate.config import FrigateConfig
 from frigate.const import RECORD_DIR
 from frigate.models import Event, Recordings
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 bandwidth_equation = Recordings.segment_size / (
     Recordings.end_time - Recordings.start_time
 )

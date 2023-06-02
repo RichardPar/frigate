@@ -1,5 +1,5 @@
 from rknnlite.api import RKNNLite
-#import logging
+from loguru import logger
 import numpy as np
 
 from frigate.detectors.detection_api import DetectionApi
@@ -21,10 +21,10 @@ class Rk3588npu(DetectionApi):
 
     def __init__(self, detector_config: Rk3588npuDetectorConfig):
         print('Here')
-        #logger_.info('Loading RK3588 NPU - Using %s',detector_config.model.path)
+        logger.info('Loading RK3588 NPU - Using %s',detector_config.model.path)
         rknn_lite = RKNNLite()
-        ret = rknn_lite.load_rknn(detector_config.model.path)
-
+        ret = rknn_lite.load_rknn('/mobilenet_v1.rknn')
+        ret = rknn_lite.init_runtime(core_mask=RKNNLite.NPU_CORE_0)
 
     def detect_raw(self, tensor_input):
         #self.interpreter.set_tensor(self.tensor_input_details[0]["index"], tensor_input)

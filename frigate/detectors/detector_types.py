@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 import importlib
 import pkgutil
 from typing import Union
@@ -11,7 +11,7 @@ from .detection_api import DetectionApi
 from .detector_config import BaseDetectorConfig
 
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 _included_modules = pkgutil.iter_modules(plugins.__path__, plugins.__name__ + ".")
