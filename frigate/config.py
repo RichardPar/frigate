@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-import logging
+from loguru import logger
 import os
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
@@ -44,7 +44,7 @@ from frigate.detectors import (
 from frigate.version import VERSION
 
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 # TODO: Identify what the default format to display timestamps is
 DEFAULT_TIME_FORMAT = "%m/%d/%Y %H:%M:%S"

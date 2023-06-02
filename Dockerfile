@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.2
 
 # https://askubuntu.com/questions/972516/debian-frontend-environment-variable
-ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=interactive
 
 FROM debian:11 AS base
 
@@ -193,6 +193,7 @@ EXPOSE 8555/tcp 8555/udp
 ENV S6_LOGGING_SCRIPT="T 1 n0 s10000000 T"
 
 ENTRYPOINT ["/init"]
+
 CMD []
 
 # Frigate deps with Node.js and NPM for devcontainer

@@ -1,4 +1,5 @@
-import logging
+from rknnlite.api import RKNNLite
+from loguru import logger
 import multiprocessing as mp
 from multiprocessing.queues import Queue
 from multiprocessing.synchronize import Event as MpEvent
@@ -47,7 +48,7 @@ from frigate.video import capture_camera, track_camera
 from frigate.watchdog import FrigateWatchdog
 from frigate.types import CameraMetricsTypes, RecordMetricsTypes
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 class FrigateApp:
@@ -64,18 +65,21 @@ class FrigateApp:
         self.processes: dict[str, int] = {}
 
     def set_environment_vars(self) -> None:
+        print('-------------------------')
+        print(self.config.environment_vars.items())
         for key, value in self.config.environment_vars.items():
             os.environ[key] = value
 
     def ensure_dirs(self) -> None:
         for d in [CONFIG_DIR, RECORD_DIR, CLIPS_DIR, CACHE_DIR, MODEL_CACHE_DIR]:
             if not os.path.exists(d) and not os.path.islink(d):
-                logger.info(f"Creating directory: {d}")
+                logger.debug(f"Creating directory: {d}")
                 os.makedirs(d)
             else:
                 logger.debug(f"Skipping directory: {d}")
 
     def init_logger(self) -> None:
+
         self.log_process = mp.Process(
             target=log_process, args=(self.log_queue,), name="log_process"
         )
@@ -129,15 +133,18 @@ class FrigateApp:
             }
 
     def set_log_levels(self) -> None:
-        logging.getLogger().setLevel(self.config.logger.default.value.upper())
-        for log, level in self.config.logger.logs.items():
-            logging.getLogger(log).setLevel(level.value.upper())
+        print('Stubbed')
 
-        if not "werkzeug" in self.config.logger.logs:
-            logging.getLogger("werkzeug").setLevel("ERROR")
+        #logging.getLogger().setLevel(self.config.logger.default.value.upper())
+        #for log, level in self.config.logger.logs.items():
+        #    logging.getLogger(log).setLevel(level.value.upper())
 
-        if not "ws4py" in self.config.logger.logs:
-            logging.getLogger("ws4py").setLevel("ERROR")
+        #if not "werkzeug" in self.config.logger.logs:
+        #    logging.getLogger("werkzeug").setLevel("ERROR")
+
+        #if not "ws4py" in self.config.logger.logs:
+        #    logging.getLogger("ws4py").setLevel("ERROR")
+
 
     def init_queues(self) -> None:
         # Queues for clip processing
@@ -170,7 +177,7 @@ class FrigateApp:
         migrate_db = SqliteExtDatabase(self.config.database.path)
 
         # Run migrations
-        del logging.getLogger("peewee_migrate").handlers[:]
+        #del logging.getLogger("peewee_migrate").handlers[:]
         router = Router(migrate_db)
         router.run()
 
@@ -402,7 +409,7 @@ class FrigateApp:
 
     def start(self) -> None:
         self.init_logger()
-        logger.info(f"Starting Frigate ({VERSION})")
+        logger.debug(f"Starting Frigate ({VERSION})")
         try:
             self.ensure_dirs()
             try:

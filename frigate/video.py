@@ -1,5 +1,5 @@
 import datetime
-import logging
+from loguru import logger
 import multiprocessing as mp
 import os
 import queue
@@ -35,7 +35,7 @@ from frigate.util import (
     yuv_region_2_yuv,
 )
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 def filtered(obj, objects_to_track, object_filters):
@@ -216,7 +216,7 @@ class CameraWatchdog(threading.Thread):
         stop_event,
     ):
         threading.Thread.__init__(self)
-        self.logger = logging.getLogger(f"watchdog.{camera_name}")
+        #self.logger = logging.getLogger(f"watchdog.{camera_name}")
         self.camera_name = camera_name
         self.config = config
         self.capture_thread = None
@@ -244,7 +244,7 @@ class CameraWatchdog(threading.Thread):
                     "cmd": c["cmd"],
                     "roles": c["roles"],
                     "logpipe": logpipe,
-                    "process": start_or_restart_ffmpeg(c["cmd"], self.logger, logpipe),
+                    "process": start_or_restart_ffmpeg(c["cmd"], logger, logpipe),
                 }
             )
 
@@ -254,38 +254,37 @@ class CameraWatchdog(threading.Thread):
 
             if not self.capture_thread.is_alive():
                 self.camera_fps.value = 0
-                self.logger.error(
+                logger.error(
                     f"Ffmpeg process crashed unexpectedly for {self.camera_name}."
                 )
-                self.logger.error(
+                logger.error(
                     "The following ffmpeg logs include the last 100 lines prior to exit."
                 )
-                self.logpipe.dump()
                 self.start_ffmpeg_detect()
             elif now - self.capture_thread.current_frame.value > 20:
                 self.camera_fps.value = 0
-                self.logger.info(
+                logger.info(
                     f"No frames received from {self.camera_name} in 20 seconds. Exiting ffmpeg..."
                 )
                 self.ffmpeg_detect_process.terminate()
                 try:
-                    self.logger.info("Waiting for ffmpeg to exit gracefully...")
+                    logger.info("Waiting for ffmpeg to exit gracefully...")
                     self.ffmpeg_detect_process.communicate(timeout=30)
                 except sp.TimeoutExpired:
-                    self.logger.info("FFmpeg did not exit. Force killing...")
+                    logger.info("FFmpeg did not exit. Force killing...")
                     self.ffmpeg_detect_process.kill()
                     self.ffmpeg_detect_process.communicate()
             elif self.camera_fps.value >= (self.config.detect.fps + 10):
                 self.camera_fps.value = 0
-                self.logger.info(
+                logger.info(
                     f"{self.camera_name} exceeded fps limit. Exiting ffmpeg..."
                 )
                 self.ffmpeg_detect_process.terminate()
                 try:
-                    self.logger.info("Waiting for ffmpeg to exit gracefully...")
+                    logger.info("Waiting for ffmpeg to exit gracefully...")
                     self.ffmpeg_detect_process.communicate(timeout=30)
                 except sp.TimeoutExpired:
-                    self.logger.info("FFmpeg did not exit. Force killing...")
+                    logger.info("FFmpeg did not exit. Force killing...")
                     self.ffmpeg_detect_process.kill()
                     self.ffmpeg_detect_process.communicate()
 
@@ -302,12 +301,12 @@ class CameraWatchdog(threading.Thread):
                     if datetime.datetime.now().timestamp() > (
                         latest_segment_time + 120
                     ):
-                        self.logger.error(
+                        logger.error(
                             f"No new recording segments were created for {self.camera_name} in the last 120s. restarting the ffmpeg record process..."
                         )
                         p["process"] = start_or_restart_ffmpeg(
                             p["cmd"],
-                            self.logger,
+                            logger,
                             p["logpipe"],
                             ffmpeg_process=p["process"],
                         )
@@ -320,21 +319,21 @@ class CameraWatchdog(threading.Thread):
 
                 p["logpipe"].dump()
                 p["process"] = start_or_restart_ffmpeg(
-                    p["cmd"], self.logger, p["logpipe"], ffmpeg_process=p["process"]
+                    p["cmd"], logger, p["logpipe"], ffmpeg_process=p["process"]
                 )
 
-        stop_ffmpeg(self.ffmpeg_detect_process, self.logger)
+        stop_ffmpeg(self.ffmpeg_detect_process, logger)
         for p in self.ffmpeg_other_processes:
-            stop_ffmpeg(p["process"], self.logger)
+            stop_ffmpeg(p["process"], logger)
             p["logpipe"].close()
-        self.logpipe.close()
+        #self.logpipe.close()
 
     def start_ffmpeg_detect(self):
         ffmpeg_cmd = [
             c["cmd"] for c in self.config.ffmpeg_cmds if "detect" in c["roles"]
         ][0]
         self.ffmpeg_detect_process = start_or_restart_ffmpeg(
-            ffmpeg_cmd, self.logger, self.logpipe, self.frame_size
+            ffmpeg_cmd, logger, self.logpipe, self.frame_size
         )
         self.ffmpeg_pid.value = self.ffmpeg_detect_process.pid
         self.capture_thread = CameraCapture(

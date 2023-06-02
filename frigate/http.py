@@ -1,7 +1,8 @@
 import base64
 from datetime import datetime, timedelta, timezone
 import copy
-import logging
+#import logging
+from  loguru import logger
 import glob
 import json
 import os
@@ -49,7 +50,7 @@ from frigate.util import (
 from frigate.storage import StorageMaintainer
 from frigate.version import VERSION
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 bp = Blueprint("frigate", __name__)
 
@@ -1000,7 +1001,7 @@ def config_save():
         try:
             restart_frigate()
         except Exception as e:
-            logging.error(f"Error restarting Frigate: {e}")
+            logger.error(f"Error restarting Frigate: {e}")
             return "Config successfully saved, unable to restart Frigate", 200
 
         return (

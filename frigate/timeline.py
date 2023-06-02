@@ -1,6 +1,6 @@
 """Record events for object, audio, etc. detections."""
 
-import logging
+import loguru as logger
 import threading
 import queue
 
@@ -13,7 +13,7 @@ from multiprocessing.synchronize import Event as MpEvent
 
 from frigate.util import to_relative_box
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 class TimelineProcessor(threading.Thread):
