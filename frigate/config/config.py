@@ -640,6 +640,8 @@ class FrigateConfig(FrigateBaseModel):
                     model_config["path"] = "/cpu_model.tflite"
                 elif detector_config.type == "edgetpu":
                     model_config["path"] = "/edgetpu_model.tflite"
+                elif detector_config.type == "armgpu":
+                    model_config["path"] = "/cpu_model.tflite"
 
             model = ModelConfig.model_validate(model_config)
             model.check_and_load_plus_model(self.plus_api, detector_config.type)
