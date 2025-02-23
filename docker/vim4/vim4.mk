@@ -1,15 +1,15 @@
-BOARDS += rpi
+BOARDS += vim4
 
-local-rpi: version
-	docker buildx bake --file=docker/rpi/rpi.hcl rpi \
-		--set rpi.tags=frigate:latest-rpi \
+local-vim4: version
+	docker buildx bake --file=docker/vim4/vim4.hcl vim4 \
+		--set cim4.tags=frigate:latest-vim4 \
 		--load
 
-build-rpi: version
-	docker buildx bake --file=docker/rpi/rpi.hcl rpi \
-		--set rpi.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rpi
+build-vim4: version
+	docker buildx bake --file=docker/vim4/vim4.hcl vim4 \
+		--set vim4.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-vim4
 
-push-rpi: build-rpi
-	docker buildx bake --file=docker/rpi/rpi.hcl rpi \
-		--set rpi.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-rpi \
+push-vim4: build-vim4
+	docker buildx bake --file=docker/vim4/vim4.hcl vim4 \
+		--set vim4.tags=$(IMAGE_REPO):${GITHUB_REF_NAME}-$(COMMIT_HASH)-vim4 \
 		--push

@@ -10,8 +10,8 @@ target rootfs {
   target = "rootfs"
 }
 
-target rpi {
-  dockerfile = "docker/rpi/Dockerfile"
+target vim4 {
+  dockerfile = "docker/vim4/Dockerfile"
   contexts = {
     deps = "target:deps",
     rootfs = "target:rootfs"
