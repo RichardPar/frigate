@@ -584,6 +584,24 @@ model:
 
 When using CPU detectors, you can add one CPU detector per camera. Adding more detectors than the number of cameras should not improve performance.
 
+To verify that the integration is working correctly, start Frigate and observe the logs for any error messages related to CodeProject.AI. Additionally, you can check the Frigate web interface to see if the objects detected by CodeProject.AI are being displayed and tracked properly.
+
+## ARMGPU Khadas VIM4 SBC
+
+The ARMGPU detector type runs a TensorFlow Lite model utilizing the MALI GPU hardware acceleration. 
+
+A TensorFlow Lite model is provided in the container at `/cpu_model.tflite` and is used by this detector type by default. To provide your own model, bind mount the file into the container and provide the path with `model.path`.
+
+```yaml
+detectors:
+  armgpu:
+    type: armgpu
+
+model:
+  path: "/custom_model.tflite"
+```
+This uses the same model as the CPU version. 
+
 ## Deepstack / CodeProject.AI Server Detector
 
 The Deepstack / CodeProject.AI Server detector for Frigate allows you to integrate Deepstack and CodeProject.AI object detection capabilities into Frigate. CodeProject.AI and DeepStack are open-source AI platforms that can be run on various devices such as the Raspberry Pi, Nvidia Jetson, and other compatible hardware. It is important to note that the integration is performed over the network, so the inference times may not be as fast as native Frigate detectors, but it still provides an efficient and reliable solution for object detection and tracking.
@@ -746,3 +764,6 @@ The pre-trained YOLO-NAS weights from DeciAI are subject to their license and ca
 :::
 
 The input image size in this notebook is set to 320x320. This results in lower CPU usage and faster inference times without impacting performance in most cases due to the way Frigate crops video frames to areas of interest before running detection. The notebook and config can be updated to 640x640 if desired.
+
+
+
