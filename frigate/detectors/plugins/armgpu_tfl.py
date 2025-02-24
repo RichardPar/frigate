@@ -26,12 +26,11 @@ class ArmGpuTfl(DetectionApi):
     type_key = DETECTOR_KEY
 
     def __init__(self, detector_config: ArmGpuDetectorConfig):
-
         edge_tpu_delegate = None
 
         try:
-            logger.info(f"Attempting to load ARM GPU")
-            edge_tpu_delegate = load_delegate(library="libarmnnDelegate.so", options={"backends":"GpuAcc","logging-severity":"info"})
+            logger.info("Attempting to load ARM GPU")
+            edge_tpu_delegate = self.load_armnn_delegate()
             logger.info("TPU found")
             self.interpreter = Interpreter(
                 model_path=detector_config.model.path,
@@ -39,7 +38,7 @@ class ArmGpuTfl(DetectionApi):
             )
         except ValueError:
             logger.error(
-                "No GPU was detected. If you do not have a ARM GPU, you must configure CPU detectors."
+                "No GPU was detected. If you do not have an ARM GPU, you must configure CPU detectors."
             )
             raise
 
@@ -47,6 +46,15 @@ class ArmGpuTfl(DetectionApi):
 
         self.tensor_input_details = self.interpreter.get_input_details()
         self.tensor_output_details = self.interpreter.get_output_details()
+
+    def load_armnn_delegate(self):
+        try:
+            return load_delegate(
+                library="libarmnnDelegate.so",
+                options={"backends": "GpuAcc", "logging-severity": "info"}
+            )
+        except ValueError as e:
+            raise ValueError(f"Failed to load Arm NN delegate: {e}")
 
     def detect_raw(self, tensor_input):
         self.interpreter.set_tensor(self.tensor_input_details[0]["index"], tensor_input)
