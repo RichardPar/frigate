@@ -13,7 +13,8 @@ apt-get -qq install --no-install-recommends -y \
     python3-pip \
     curl \
     jq \
-    nethogs
+    nethogs \
+    libwayland-server0
 
 mkdir -p -m 600 /root/.gnupg
 
@@ -23,9 +24,8 @@ if [[ "${TARGETARCH}" == "arm64" ]]; then
    wget -c "https://github.com/ARM-software/armnn/releases/download/v23.02/ArmNN-linux-aarch64.tar.gz"
    mkdir /lib/armnn
    tar -xf ArmNN*.tar.gz -C /lib/armnn
-   mkdir /etc
-   mkdir /etc/ld.so.con.d
-   echo "/lib/armnn" > /etc/ld.so.conf.d/armnn.conf
+   mkdir -p /etc/ld.so.conf.d | true 
+   echo "/usr/lib/armnn" > /etc/ld.so.conf.d/armnn.conf
    wget "https://dl.khadas.com/repos/vim4/pool/main/l/linux-gpu-mali-wayland/linux-gpu-mali-wayland_1.1-r37p0-202208_arm64.deb"
    dpkg -i linux-gpu-mali-wayland_1.1-r37p0-202208_arm64.deb
 fi

@@ -10,7 +10,9 @@ ARG TARGETARCH
 RUN --mount=type=bind,source=docker/vim4/install_deps.sh,target=/deps/install_deps.sh \
     /deps/install_deps.sh
 
-ENV DEFAULT_FFMPEG_VERSION="vim4"
+RUN ldconfig
+
+ENV DEFAULT_FFMPEG_VERSION="7.0"
 ENV INCLUDED_FFMPEG_VERSIONS="${DEFAULT_FFMPEG_VERSION}:${INCLUDED_FFMPEG_VERSIONS}"
 
 WORKDIR /opt/frigate/
