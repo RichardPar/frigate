@@ -50,7 +50,7 @@ class ArmGpuTfl(DetectionApi):
     def load_armnn_delegate(self):
         try:
             return load_delegate(
-                library="libarmnnDelegate.so",
+                library="/usr/lib/armnn/delegate/libarmnnDelegate.so",
                 options={"backends": "GpuAcc", "logging-severity": "info"}
             )
         except ValueError as e:
