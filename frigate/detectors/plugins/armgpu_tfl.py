@@ -51,7 +51,7 @@ class ArmGpuTfl(DetectionApi):
         try:
             return load_delegate(
                 library="/usr/lib/armnn/delegate/libarmnnDelegate.so",
-                options={"backends": "GpuAcc", "logging-severity": "info"}
+                options={"backends": "GpuAcc", "logging-severity": "warning"}
             )
         except ValueError as e:
             raise ValueError(f"Failed to load Arm NN delegate: {e}")
